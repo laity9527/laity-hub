@@ -7,7 +7,8 @@ import projects from '../data/projects.json';
 const statusLabel: Record<string, string> = { live: 'Live', wip: 'WIP' };
 const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
 
-const tracks = await fetchLatestTracks('https://build.laity.work/rss.xml', 3);
+const FEED_URL = 'https://build.laity.work/rss.xml';
+const tracks = await fetchLatestTracks(FEED_URL, 3);
 const featuredProjects = projects.filter((project) => project.isFeatured);
 const gridProjects = projects.filter((project) => !project.isFeatured);
 ---
@@ -79,7 +80,7 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 			</section>
 
 			<!-- 4. Latest Traces（最新轨迹：构建时拉取，失败则降级为占位文案） -->
-			<section class="tracks">
+			<section class="tracks" data-feed={FEED_URL}>
 				<h2 class="label">Latest Traces</h2>
 				{tracks.length > 0 ? (
 					<ul>
@@ -204,3 +205,77 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 	.tracks time { color: var(--dim); font-size: 0.8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 	.tracks-fallback { color: var(--dim); font-size: 0.9rem; }
 </style>
+
+<script>
+	// 渐进增强：构建时已烘入条目，这里再拉一次 feed 让它保持「最新」。
+	// 失败只打标记、不动 DOM，所以无 JS 或拉取失败时呈现的仍是服务端结果。
+	const section = document.querySelector<HTMLElement>('.tracks');
+	const feedUrl = section?.dataset.feed;
+
+	if (section && feedUrl) {
+		const mark = (outcome: string) => section.setAttribute('data-tracks', outcome);
+		// 与 src/lib/tracks.ts 同口径：按 Asia/Shanghai 取日
+		const toDay = (date: Date) =>
+			new Intl.DateTimeFormat('en-CA', {
+				timeZone: 'Asia/Shanghai',
+				year: 'numeric',
+				month: '2-digit',
+				day: '2-digit',
+			}).format(date);
+
+		const refresh = async () => {
+			try {
+				const res = await fetch(feedUrl, { cache: 'no-store' });
+				if (!res.ok) return mark('error');
+				const xml = await res.text();
+				// catch-all 宿主会用 200 返回 HTML 壳
+				if (/^\s*(<!DOCTYPE\s+html|<html[\s>])/i.test(xml)) return mark('error');
+				const doc = new DOMParser().parseFromString(xml, 'application/xml');
+				if (doc.querySelector('parsererror')) return mark('error');
+
+				const items = Array.from(doc.querySelectorAll('rss > channel > item'))
+					.slice(0, 3)
+					.map((item) => {
+						const text = (tag: string) => (item.querySelector(tag)?.textContent ?? '').trim();
+						const link = text('link');
+						const pubDate = new Date(text('pubDate'));
+						return {
+							title: text('title'),
+							url: /^https?:\/\//i.test(link) ? link : '',
+							date: Number.isNaN(pubDate.getTime()) ? '' : toDay(pubDate),
+						};
+					})
+					.filter((item) => item.title && item.url);
+
+				if (items.length === 0) return mark('empty');
+
+				// 全部校验通过后才动 DOM；一律 textContent，不拼接 HTML
+				const list = document.createElement('ul');
+				for (const item of items) {
+					const li = document.createElement('li');
+					const a = document.createElement('a');
+					a.href = item.url;
+					a.target = '_blank';
+					a.rel = 'noopener';
+					a.textContent = item.title;
+					li.append(a);
+					if (item.date) {
+						const time = document.createElement('time');
+						time.dateTime = item.date;
+						time.textContent = item.date;
+						li.append(time);
+					}
+					list.append(li);
+				}
+				const fallback = section.querySelector('.tracks-fallback');
+				if (fallback) fallback.replaceWith(list);
+				else section.querySelector('ul')?.replaceWith(list);
+				mark('refreshed');
+			} catch {
+				mark('error');
+			}
+		};
+
+		void refresh();
+	}
+</script>
