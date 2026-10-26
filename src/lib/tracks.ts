@@ -1,5 +1,6 @@
 import http from 'node:http';
 import https from 'node:https';
+import { XMLParser } from 'fast-xml-parser';
 
 export type Track = { title: string; url: string; date: string };
 
@@ -39,20 +40,15 @@ function getFeed(url: string, redirectsLeft = 3): Promise<FeedResponse> {
 	});
 }
 
-const tagText = (block: string, tag: string) => {
-	const m = block.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'));
-	if (!m) return '';
-	return m[1]
-		.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
-		.replace(/&lt;/g, '<')
-		.replace(/&gt;/g, '>')
-		.replace(/&quot;/g, '"')
-		.replace(/&#39;|&apos;/g, "'")
-		.replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
-		.replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(Number(dec)))
-		.replace(/&amp;/g, '&')
-		.trim();
-};
+// collapseArray:false：单条 <category> 也要保持数组形态，避免取用时形态在 object/array 之间漂移
+// htmlEntities:true：默认只解 &amp; &lt; &quot; 等预定义实体，&#39;/&#x4E2D; 这类会原样留在标题里
+const parser = new XMLParser({ ignoreAttributes: true, collapseArray: false, htmlEntities: true });
+
+type RssItem = { title?: string; link?: string; pubDate?: string };
+
+interface RssDocument {
+	rss?: { channel?: { item?: RssItem | RssItem[] } };
+}
 
 // 与前后志站的展示口径一致：按 Asia/Shanghai 取日。UTC 截取会把带 +08:00 的时间戳串到前一天
 const feedDate = (date: Date) =>
@@ -63,27 +59,31 @@ const feedDate = (date: Date) =>
 		day: '2-digit',
 	}).format(date);
 
-// 拉取失败/超时/拿回的是站点 catch-all 的 HTML 壳时返回空数组，由页面降级成占位文案
+// 只有一条日志时 channel.item 是对象而不是数组，两种形态都要吃
+export function parseTracks(body: string, limit: number): Track[] {
+	const doc = parser.parse(body) as RssDocument;
+	const raw = doc?.rss?.channel?.item;
+	const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
+	return list
+		.map((item) => {
+			const link = typeof item.link === 'string' ? item.link.trim() : '';
+			const pubDate = new Date(typeof item.pubDate === 'string' ? item.pubDate : NaN);
+			return {
+				title: typeof item.title === 'string' ? item.title.trim() : '',
+				url: /^https?:\/\//i.test(link) ? link : '',
+				date: Number.isNaN(pubDate.getTime()) ? '' : feedDate(pubDate),
+			};
+		})
+		.filter((track) => track.title && track.url)
+		.slice(0, limit);
+}
+
+// 拉取失败/超时/拿回的不是 RSS（比如站点的 catch-all HTML 壳）时返回空数组，由页面降级成占位文案
 export async function fetchLatestTracks(feedUrl: string, limit: number): Promise<Track[]> {
 	try {
 		const res = await getFeed(feedUrl);
 		if (res.status !== 200) return [];
-		// catch-all 宿主会用 200 返回 HTML 壳，所以判据取正文形状，不依赖宿主给 .xml 配的 content-type
-		if (/^\s*(<!DOCTYPE\s+html|<html[\s>])/i.test(res.body)) return [];
-		const items = res.body.match(/<item[\s\S]*?<\/item>/gi);
-		if (!items) return [];
-		return items
-			.map((item) => {
-				const link = tagText(item, 'link');
-				const pubDate = new Date(tagText(item, 'pubDate'));
-				return {
-					title: tagText(item, 'title'),
-					url: /^https?:\/\//i.test(link) ? link : '',
-					date: Number.isNaN(pubDate.getTime()) ? '' : feedDate(pubDate),
-				};
-			})
-			.filter((track) => track.title && track.url)
-			.slice(0, limit);
+		return parseTracks(res.body, limit);
 	} catch {
 		return [];
 	}
