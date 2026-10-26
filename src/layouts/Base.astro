@@ -1,0 +1,48 @@
+---
+interface Props {
+	title: string;
+	/** 单屏居中页（如 404），body 撑满视口并垂直居中 */
+	centered?: boolean;
+}
+
+const { title, centered = false } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+	</head>
+	<body class:list={[centered && 'centered']}>
+		<slot />
+	</body>
+</html>
+
+<style is:global>
+	/* 基础重置与全局样式 */
+	* { box-sizing: border-box; margin: 0; padding: 0; }
+	body {
+		background-color: #0a0a0a;
+		color: #f4f4f5;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+		line-height: 1.6;
+		padding: 2rem 1rem;
+		display: flex;
+		justify-content: center;
+	}
+	body.centered { align-items: center; min-height: 100vh; }
+	.container { max-width: 1000px; width: 100%; }
+
+	/* 头部区 */
+	header { margin-bottom: 4rem; margin-top: 4rem; text-align: center; }
+	h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 1rem; }
+	.highlight { color: #fbbf24; }
+	.subtitle { font-size: 1.25rem; color: #a1a1aa; max-width: 600px; margin: 0 auto; }
+
+	/* 页脚 */
+	footer { margin-top: 5rem; text-align: center; color: #52525b; font-size: 0.875rem; padding-top: 2rem; border-top: 1px solid #27272a; }
+	footer a { color: #a1a1aa; text-decoration: none; }
+	footer a:hover { color: #f4f4f5; }
+</style>
