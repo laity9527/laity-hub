@@ -1,5 +1,8 @@
 ---
 // Laity 主站
+import projects from '../data/projects.json';
+
+const statusLabel: Record<string, string> = { live: 'Live', wip: 'WIP' };
 ---
 
 <!DOCTYPE html>
@@ -21,7 +24,7 @@
 				justify-content: center;
 			}
 			.container { max-width: 1000px; width: 100%; }
-			
+
 			/* 头部区 */
 			header { margin-bottom: 4rem; margin-top: 4rem; text-align: center; }
 			h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 1rem; }
@@ -60,7 +63,7 @@
 			}
 			.card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
 			.card p { color: #a1a1aa; font-size: 0.95rem; flex-grow: 1; }
-			
+
 			/* 状态标签 */
 			.tag {
 				font-size: 0.75rem;
@@ -71,6 +74,22 @@
 			}
 			.tag-live { background-color: rgba(52, 211, 153, 0.1); color: #34d399; border: 1px solid #065f46; }
 			.tag-wip { background-color: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid #92400e; }
+
+			/* 状态标签呼吸灯 */
+			.tag { display: inline-flex; align-items: center; gap: 0.4rem; }
+			.dot {
+				width: 0.45rem;
+				height: 0.45rem;
+				border-radius: 50%;
+				flex-shrink: 0;
+				animation: breathe 2s ease-in-out infinite;
+			}
+			.tag-live .dot { background-color: #34d399; --halo: rgba(52, 211, 153, 0.6); }
+			.tag-wip .dot { background-color: #fbbf24; --halo: rgba(251, 191, 36, 0.6); }
+			@keyframes breathe {
+				0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--halo); }
+				50% { opacity: 0.45; box-shadow: 0 0 0 4px rgba(0, 0, 0, 0); }
+			}
 
 			/* 特别强调的卡片 */
 			.card-main {
@@ -87,7 +106,7 @@
 	</head>
 	<body>
 		<div class="container">
-			
+
 			<!-- 1. 头部区 -->
 			<header>
 				<h1>Laity<span class="highlight">.</span></h1>
@@ -96,59 +115,29 @@
 
 			<!-- 2. 项目矩阵区 -->
 			<main class="grid">
-				
-				<!-- 核心项目：前后志 (占两列) -->
-				<a href="https://build.laity.work" class="card col-span-2 card-main" target="_blank">
-					<div style="display: flex; justify-content: space-between; align-items: start;">
-						<h3>📓 前后志</h3>
-						<span class="tag tag-live">Live</span>
-					</div>
-					<p style="margin-top: 1rem; font-size: 1.1rem;">一个公开的判断轨迹站。记录每个作品从想法到上线的 BEFORE 与 AFTER 开发日志。</p>
-				</a>
-
-				<!-- 系统项目：地球 Online -->
-				<a href="#" class="card" target="_blank">
-					<div style="display: flex; justify-content: space-between; align-items: start;">
-						<h3>🌍 地球 Online</h3>
-						<span class="tag tag-wip">WIP</span>
-					</div>
-					<p style="margin-top: 1rem;">真人镜像版系统。</p>
-				</a>
-
-				<!-- 工具矩阵 1 -->
-				<a href="#" class="card" target="_blank">
-					<div style="display: flex; justify-content: space-between; align-items: start;">
-						<h3>🌿 药都安</h3>
-						<span class="tag tag-live">Live</span>
-					</div>
-					<p style="margin-top: 1rem;">中药材溯源与辅助工具。</p>
-				</a>
-
-				<!-- 工具矩阵 2 -->
-				<a href="#" class="card" target="_blank">
-					<div style="display: flex; justify-content: space-between; align-items: start;">
-						<h3>⚔️ 三国萌主</h3>
-						<span class="tag tag-live">Live</span>
-					</div>
-					<p style="margin-top: 1rem;">休闲策略小程序。</p>
-				</a>
-
-				<!-- 工具矩阵 3 -->
-				<a href="#" class="card" target="_blank">
-					<div style="display: flex; justify-content: space-between; align-items: start;">
-						<h3>🧠 SBTI测试</h3>
-						<span class="tag tag-live">Live</span>
-					</div>
-					<p style="margin-top: 1rem;">基于性格的行为倾向测试。</p>
-				</a>
-
+				{projects.map((project) => (
+					<a
+						href={project.url}
+						class:list={['card', project.featured && 'col-span-2 card-main']}
+						target="_blank"
+					>
+						<div style="display: flex; justify-content: space-between; align-items: start;">
+							<h3>{`${project.icon} ${project.title}`}</h3>
+							<span class={`tag tag-${project.status}`}>
+								<span class="dot"></span>{statusLabel[project.status]}
+							</span>
+						</div>
+						<p style={project.featured ? 'margin-top: 1rem; font-size: 1.1rem;' : 'margin-top: 1rem;'}>{project.description}</p>
+					</a>
+				))}
 			</main>
 
 			<!-- 3. 页脚 -->
 			<footer>
 				<p>© 2026 Laity Studio. Built with AI.</p>
 				<p style="margin-top: 0.5rem;">
-					<a href="https://github.com/laity9527" target="_blank">GitHub</a> · 
+					<a href="/about">关于</a> ·
+					<a href="https://github.com/laity9527" target="_blank">GitHub</a> ·
 					<a href="mailto:hi@laity.work">Email</a>
 				</p>
 			</footer>

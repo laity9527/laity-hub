@@ -1,0 +1,47 @@
+[
+	{
+		"id": "qianhouzhi",
+		"title": "前后志",
+		"description": "一个公开的判断轨迹站。记录每个作品从想法到上线的 BEFORE 与 AFTER 开发日志。",
+		"status": "live",
+		"url": "https://build.laity.work",
+		"icon": "📓",
+		"featured": true
+	},
+	{
+		"id": "diqiu-online",
+		"title": "地球 Online",
+		"description": "真人镜像版系统。",
+		"status": "wip",
+		"url": "#",
+		"icon": "🌍",
+		"featured": false
+	},
+	{
+		"id": "yaodu-an",
+		"title": "药都安",
+		"description": "中药材溯源与辅助工具。",
+		"status": "live",
+		"url": "#",
+		"icon": "🌿",
+		"featured": false
+	},
+	{
+		"id": "sanguo-mengzhu",
+		"title": "三国萌主",
+		"description": "休闲策略小程序。",
+		"status": "live",
+		"url": "#",
+		"icon": "⚔️",
+		"featured": false
+	},
+	{
+		"id": "sbti",
+		"title": "SBTI测试",
+		"description": "基于性格的行为倾向测试。",
+		"status": "live",
+		"url": "#",
+		"icon": "🧠",
+		"featured": false
+	}
+]
