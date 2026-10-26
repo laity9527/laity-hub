@@ -68,12 +68,20 @@ const {
 
 	/* 基础重置与全局样式 */
 	* { box-sizing: border-box; margin: 0; padding: 0; }
+	html { scroll-behavior: smooth; }
 	body {
 		background-color: var(--bg);
 		color: var(--fg);
 		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 		line-height: 1.6;
 		padding: 0 1rem 2rem;
+		/* 一层极淡的琥珀天光 + 点阵底纹，固定不随滚动漂移 */
+		background-image:
+			radial-gradient(900px 480px at 50% -14%, rgba(251, 191, 36, 0.05), rgba(10, 10, 10, 0) 70%),
+			radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 0);
+		background-size: 100% 100%, 24px 24px;
+		background-repeat: no-repeat, repeat;
+		background-attachment: fixed, fixed;
 	}
 	body.centered {
 		min-height: 100vh;
@@ -112,5 +120,22 @@ const {
 		.nav-links { gap: 1.25rem; }
 		.nav-links a { font-size: 0.85rem; }
 		header { margin: 2rem 0 3rem; }
+	}
+
+	/* 键盘可达性：只用焦点环，不影响鼠标交互 */
+	a:focus-visible, .card:focus-visible {
+		outline: 2px solid rgba(251, 191, 36, 0.75);
+		outline-offset: 3px;
+		border-radius: 0.4rem;
+	}
+
+	/* 尊重系统的「减少动态效果」：动画收敛到终态，内容不会停在不可见状态 */
+	@media (prefers-reduced-motion: reduce) {
+		html { scroll-behavior: auto; }
+		*, *::before, *::after {
+			animation-duration: 0.001ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.001ms !important;
+		}
 	}
 </style>

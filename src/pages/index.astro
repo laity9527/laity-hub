@@ -108,6 +108,27 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 	.hero h1 { font-size: clamp(2.75rem, 7vw, 4.25rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.04em; margin-bottom: 1.25rem; }
 	.lede { max-width: 620px; margin: 0 auto; font-size: 1.2rem; color: var(--muted); }
 	.cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 2.5rem; }
+
+	/* Hero 入场：淡入上浮，逐级延迟。
+	   故意不写静态 opacity:0 —— 起始隐藏交给 keyframe 的 from + fill:both，
+	   这样在不执行动画的环境里内容仍然可见，不会整块消失 */
+	.hero .eyebrow, .hero h1, .hero .lede, .hero .cta {
+		animation: rise 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+	}
+	.hero .eyebrow { animation-delay: 0.05s; }
+	.hero h1 { animation-delay: 0.16s; }
+	.hero .lede { animation-delay: 0.28s; }
+	.hero .cta { animation-delay: 0.4s; }
+	/* 兜底：动画若因异常环境没有推进，2 秒后强制落终态，避免首屏一直停在起始隐藏态 */
+	.hero[data-anim='done'] .eyebrow, .hero[data-anim='done'] h1, .hero[data-anim='done'] .lede, .hero[data-anim='done'] .cta {
+		animation: none;
+		opacity: 1;
+		transform: none;
+	}
+	@keyframes rise {
+		from { opacity: 0; transform: translateY(16px); }
+		to { opacity: 1; transform: none; }
+	}
 	.btn-primary, .btn-ghost {
 		padding: 0.7rem 1.5rem;
 		border-radius: 0.6rem;
@@ -152,9 +173,14 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 		text-decoration: none;
 		position: relative;
 		overflow: hidden;
-		transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+		transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 	}
-	.card:hover { border-color: var(--line-hover); background-color: var(--surface-hover); transform: translateY(-2px); }
+	.card:hover {
+		border-color: rgba(251, 191, 36, 0.42);
+		background-color: var(--surface-hover);
+		box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.08), 0 18px 40px -20px rgba(251, 191, 36, 0.22);
+		transform: translateY(-3px);
+	}
 	.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
 	.card h3 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
 	.card p { margin-top: 0.75rem; color: var(--muted); font-size: 0.9rem; flex-grow: 1; }
@@ -163,7 +189,11 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 	.card-featured { padding: 2.5rem; background: linear-gradient(135deg, var(--surface) 0%, var(--line) 100%); border-color: var(--line-strong); }
 	.card-featured h3 { font-size: 1.6rem; color: var(--accent); }
 	.card-featured p { margin-top: 1rem; max-width: 62ch; font-size: 1.05rem; }
-	.card-featured:hover { border-color: var(--line-hover); }
+	.card-featured:hover {
+		border-color: rgba(251, 191, 36, 0.5);
+		background: linear-gradient(135deg, var(--surface-hover) 0%, var(--line-strong) 100%);
+		box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.1), 0 24px 60px -24px rgba(251, 191, 36, 0.28);
+	}
 
 	/* 状态标签 */
 	.tag {
@@ -182,6 +212,7 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 
 	/* 呼吸灯 */
 	.dot {
+		position: relative;
 		width: 0.45rem;
 		height: 0.45rem;
 		border-radius: 50%;
@@ -190,6 +221,19 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 	}
 	.tag-live .dot { background-color: var(--live); --halo: rgba(52, 211, 153, 0.6); }
 	.tag-wip .dot { background-color: var(--accent); --halo: rgba(251, 191, 36, 0.6); }
+	/* 仅 LIVE 绿点外加一圈 ping 扩散；currentColor 取的就是标签的 --live 文字色 */
+	.tag-live .dot::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		background-color: currentColor;
+		animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+	}
+	@keyframes ping {
+		0% { transform: scale(1); opacity: 0.5; }
+		70%, 100% { transform: scale(2.6); opacity: 0; }
+	}
 	@keyframes breathe {
 		0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--halo); }
 		50% { opacity: 0.45; box-shadow: 0 0 0 4px rgba(0, 0, 0, 0); }
@@ -207,6 +251,10 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 </style>
 
 <script>
+	// 入场动画兜底：正常浏览器里动画 1.1 秒内就跑完了，这里只是给异常环境一个落地点
+	const hero = document.querySelector<HTMLElement>('.hero');
+	if (hero) setTimeout(() => hero.setAttribute('data-anim', 'done'), 2000);
+
 	// 渐进增强：构建时已烘入条目，这里再拉一次 feed 让它保持「最新」。
 	// 失败只打标记、不动 DOM，所以无 JS 或拉取失败时呈现的仍是服务端结果。
 	const section = document.querySelector<HTMLElement>('.tracks');
