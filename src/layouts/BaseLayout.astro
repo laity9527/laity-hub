@@ -1,0 +1,116 @@
+---
+import Footer from '../components/Footer.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+	/** 单屏居中页（如 404）：整列垂直居中 */
+	centered?: boolean;
+}
+
+const {
+	title = 'Laity | 独立开发厂牌',
+	description = '外行造世界。用 AI 构建项目矩阵。',
+	centered = false,
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="前后志 · 判断轨迹"
+			href="https://build.laity.work/rss.xml"
+		/>
+	</head>
+	<body class:list={[centered && 'centered']}>
+		<nav>
+			<div class="nav-inner">
+				<a class="logo" href="/">Laity<span class="highlight">.</span></a>
+				<div class="nav-links">
+					<a href="/#projects">Projects</a>
+					<a href="/about">About</a>
+					<a href="https://github.com/laity9527" target="_blank" rel="noopener">GitHub</a>
+				</div>
+			</div>
+		</nav>
+
+		<slot />
+
+		<Footer />
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--bg: #0a0a0a;
+		--fg: #ededed;
+		--muted: #a1a1aa;
+		--dim: #52525b;
+		--surface: #18181b;
+		--surface-hover: #1f1f23;
+		--line: #27272a;
+		--line-strong: #3f3f46;
+		--line-hover: #52525b;
+		--accent: #fbbf24;
+		--live: #34d399;
+		--shell: 1120px;
+	}
+
+	/* 基础重置与全局样式 */
+	* { box-sizing: border-box; margin: 0; padding: 0; }
+	body {
+		background-color: var(--bg);
+		color: var(--fg);
+		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+		line-height: 1.6;
+		padding: 0 1rem 2rem;
+	}
+	body.centered {
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+	}
+	body.centered .container { margin-top: auto; margin-bottom: auto; }
+	.container { width: 100%; max-width: var(--shell); margin: 0 auto; }
+
+	/* 顶部导航 */
+	nav { border-bottom: 1px solid var(--line); }
+	.nav-inner {
+		width: 100%;
+		max-width: var(--shell);
+		margin: 0 auto;
+		padding: 1.25rem 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+	.logo { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; color: var(--fg); text-decoration: none; }
+	.nav-links { display: flex; align-items: center; gap: 1.75rem; }
+	.nav-links a { color: var(--muted); font-size: 0.9rem; text-decoration: none; transition: color 0.2s ease; }
+	.nav-links a:hover { color: var(--fg); }
+
+	/* 页头区（导航占了顶部，所以留白从 4rem 收到 2.5rem） */
+	header { margin: 2.5rem 0 4rem; text-align: center; }
+	h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 1rem; }
+	.highlight { color: var(--accent); }
+	.subtitle { font-size: 1.25rem; color: var(--muted); max-width: 600px; margin: 0 auto; }
+
+	@media (max-width: 640px) {
+		h1 { font-size: 2.5rem; }
+		.nav-inner { padding: 1rem 0; }
+		.nav-links { gap: 1.25rem; }
+		.nav-links a { font-size: 0.85rem; }
+		header { margin: 2rem 0 3rem; }
+	}
+</style>

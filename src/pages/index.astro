@@ -1,6 +1,6 @@
 ---
 // Laity 主站
-import Base from '../layouts/Base.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import { fetchLatestTracks } from '../lib/tracks';
 import projects from '../data/projects.json';
 
@@ -8,122 +8,178 @@ const statusLabel: Record<string, string> = { live: 'Live', wip: 'WIP' };
 const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
 
 const tracks = await fetchLatestTracks('https://build.laity.work/rss.xml', 3);
+const featuredProjects = projects.filter((project) => project.isFeatured);
+const gridProjects = projects.filter((project) => !project.isFeatured);
 ---
 
-<Base title="Laity Studio | 外行造世界">
+<BaseLayout>
 	<div class="container">
 
-		<!-- 1. 头部区 -->
-		<header>
-			<h1>Laity<span class="highlight">.</span></h1>
-			<p class="subtitle">我是外行，但我用 AI 构建世界。<br>不囤想法，直接上线。</p>
+		<!-- 1. Hero -->
+		<header class="hero">
+			<p class="eyebrow">Laity · 独立开发厂牌</p>
+			<h1>Building digital realms.</h1>
+			<p class="lede">Laity 是一个独立开发厂牌。我是外行，但我用 AI 与代码构建世界。</p>
+			<div class="cta">
+				<a class="btn-primary" href="#projects">查看矩阵</a>
+				<a class="btn-ghost" href="https://build.laity.work" target="_blank" rel="noopener">阅读轨迹 ↗</a>
+			</div>
 		</header>
 
-		<!-- 2. 项目矩阵区 -->
-		<main class="grid">
-			{projects.map((project) => (
-				<a
-					href={project.url}
-					class:list={['card', project.featured && 'col-span-2 card-main']}
-					target={isExternalUrl(project.url) ? '_blank' : undefined}
-					rel={isExternalUrl(project.url) ? 'noopener' : undefined}
-				>
-					<div style="display: flex; justify-content: space-between; align-items: start;">
-						<h3>{`${project.icon} ${project.title}`}</h3>
-						<span class={`tag tag-${project.status}`}>
-							<span class="dot"></span>{statusLabel[project.status]}
-						</span>
-					</div>
-					<p style={project.featured ? 'margin-top: 1rem; font-size: 1.1rem;' : 'margin-top: 1rem;'}>{project.description}</p>
-				</a>
-			))}
+		<main>
+
+			<!-- 2. Methodology -->
+			<section class="method">
+				<h2 class="label">Our Method</h2>
+				<div class="tenets">
+					<p class="tenet"><span class="num">01.</span>不囤想法，直接上线。</p>
+					<p class="tenet"><span class="num">02.</span>记录判断，公开复盘。</p>
+				</div>
+			</section>
+
+			<!-- 3. 项目矩阵 -->
+			<section id="projects" class="projects">
+				<h2 class="label">Projects</h2>
+
+				{featuredProjects.map((project) => (
+					<a
+						class="card card-featured"
+						href={project.url}
+						target={isExternalUrl(project.url) ? '_blank' : undefined}
+						rel={isExternalUrl(project.url) ? 'noopener' : undefined}
+					>
+						<div class="card-top">
+							<h3>{project.title}</h3>
+							<span class={`tag tag-${project.status}`}>
+								<span class="dot"></span>{statusLabel[project.status]}
+							</span>
+						</div>
+						<p>{project.description}</p>
+					</a>
+				))}
+
+				<div class="pgrid">
+					{gridProjects.map((project) => (
+						<a
+							class="card"
+							href={project.url}
+							target={isExternalUrl(project.url) ? '_blank' : undefined}
+							rel={isExternalUrl(project.url) ? 'noopener' : undefined}
+						>
+							<div class="card-top">
+								<h3>{project.title}</h3>
+								<span class={`tag tag-${project.status}`}>
+									<span class="dot"></span>{statusLabel[project.status]}
+								</span>
+							</div>
+							<p>{project.description}</p>
+						</a>
+					))}
+				</div>
+			</section>
+
+			<!-- 4. 最新轨迹（构建时拉取，失败则降级为占位文案） -->
+			<section class="tracks">
+				<h2 class="label">最新轨迹</h2>
+				{tracks.length > 0 ? (
+					<ul>
+						{tracks.map((track) => (
+							<li>
+								<a href={track.url} target="_blank" rel="noopener">{track.title}</a>
+								{track.date && <time datetime={track.date}>{track.date}</time>}
+							</li>
+						))}
+					</ul>
+				) : (
+					<p class="tracks-fallback">最新日志正在同步中...</p>
+				)}
+			</section>
+
 		</main>
 
-		<!-- 3. 最新轨迹（构建时拉取，失败则降级为占位文案） -->
-		<section class="tracks">
-			<h2>最新轨迹</h2>
-			{tracks.length > 0 ? (
-				<ul>
-					{tracks.map((track) => (
-						<li>
-							<a href={track.url} target="_blank" rel="noopener">{track.title}</a>
-							{track.date && <time datetime={track.date}>{track.date}</time>}
-						</li>
-					))}
-				</ul>
-			) : (
-				<p class="tracks-fallback">最新日志正在同步中...</p>
-			)}
-		</section>
-
-		<!-- 4. 订阅入口 -->
-		<section class="subscribe">
-			<h2>订阅</h2>
-			<a class="rss-btn" href="https://build.laity.work/rss.xml" target="_blank" rel="noopener">订阅所有动态 (RSS)</a>
-		</section>
-
-		<!-- 5. 页脚 -->
-		<footer>
-			<p>© 2026 Laity Studio. Built with AI.</p>
-			<p style="margin-top: 0.5rem;">
-				<a href="/about">关于</a> ·
-				<a href="https://github.com/laity9527" target="_blank" rel="noopener">GitHub</a> ·
-				<a href="mailto:hi@laity.work">Email</a>
-			</p>
-		</footer>
-
 	</div>
-</Base>
+</BaseLayout>
 
 <style>
-	/* 便当盒网格布局 */
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(1, 1fr);
-		gap: 1.5rem;
+	/* Hero */
+	.hero { margin: 5rem 0 6rem; text-align: center; }
+	.eyebrow { font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.25rem; }
+	.hero h1 { font-size: clamp(2.75rem, 7vw, 4.25rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.04em; margin-bottom: 1.25rem; }
+	.lede { max-width: 620px; margin: 0 auto; font-size: 1.2rem; color: var(--muted); }
+	.cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 2.5rem; }
+	.btn-primary, .btn-ghost {
+		padding: 0.7rem 1.5rem;
+		border-radius: 0.6rem;
+		font-size: 0.95rem;
+		font-weight: 600;
+		text-decoration: none;
+		transition: all 0.2s ease;
 	}
+	.btn-primary { background-color: var(--fg); color: var(--bg); }
+	.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+	.btn-ghost { border: 1px solid var(--line-strong); color: var(--fg); }
+	.btn-ghost:hover { border-color: var(--line-hover); background-color: var(--surface); transform: translateY(-1px); }
+
+	/* 分区小标题 */
+	.label { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+
+	/* Methodology：左标签 / 右大字 */
+	.method { display: grid; gap: 1.5rem; padding: 4rem 0; border-top: 1px solid var(--line); }
+	.tenet { font-size: clamp(1.6rem, 3.4vw, 2.25rem); font-weight: 700; line-height: 1.35; letter-spacing: -0.02em; }
+	.tenet + .tenet { margin-top: 1.25rem; }
+	.num { margin-right: 0.6rem; color: var(--accent); font-variant-numeric: tabular-nums; }
 	@media (min-width: 768px) {
-		.grid { grid-template-columns: repeat(3, 1fr); }
-		.col-span-2 { grid-column: span 2; }
+		.method { grid-template-columns: 200px 1fr; gap: 3rem; }
 	}
 
-	/* 卡片基础样式 */
+	/* 项目矩阵 */
+	.projects { padding: 4rem 0; border-top: 1px solid var(--line); }
+	.projects > .label { display: block; margin-bottom: 2.5rem; }
+	.pgrid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin-top: 1.25rem; grid-auto-rows: 1fr; }
+	@media (min-width: 768px) {
+		.pgrid { grid-template-columns: repeat(3, 1fr); }
+	}
+
 	.card {
-		background-color: #18181b;
-		border: 1px solid #27272a;
-		border-radius: 1rem;
-		padding: 2rem;
-		text-decoration: none;
-		color: inherit;
-		transition: all 0.2s ease;
 		display: flex;
 		flex-direction: column;
+		padding: 1.75rem;
+		background-color: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: 0.9rem;
+		color: inherit;
+		text-decoration: none;
 		position: relative;
 		overflow: hidden;
+		transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
 	}
-	.card:hover {
-		border-color: #52525b;
-		transform: translateY(-2px);
-		background-color: #1f1f23;
-	}
-	.card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-	.card p { color: #a1a1aa; font-size: 0.95rem; flex-grow: 1; }
+	.card:hover { border-color: var(--line-hover); background-color: var(--surface-hover); transform: translateY(-2px); }
+	.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+	.card h3 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
+	.card p { margin-top: 0.75rem; color: var(--muted); font-size: 0.9rem; flex-grow: 1; }
+
+	/* 重点推荐：横跨全宽 */
+	.card-featured { padding: 2.5rem; background: linear-gradient(135deg, var(--surface) 0%, var(--line) 100%); border-color: var(--line-strong); }
+	.card-featured h3 { font-size: 1.6rem; color: var(--accent); }
+	.card-featured p { margin-top: 1rem; max-width: 62ch; font-size: 1.05rem; }
+	.card-featured:hover { border-color: var(--line-hover); }
 
 	/* 状态标签 */
 	.tag {
-		font-size: 0.75rem;
-		padding: 0.2rem 0.6rem;
-		border-radius: 1rem;
-		font-weight: 600;
-		text-transform: uppercase;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4rem;
+		padding: 0.2rem 0.6rem;
+		border-radius: 1rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		flex-shrink: 0;
 	}
-	.tag-live { background-color: rgba(52, 211, 153, 0.1); color: #34d399; border: 1px solid #065f46; }
-	.tag-wip { background-color: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid #92400e; }
+	.tag-live { background-color: rgba(52, 211, 153, 0.1); color: var(--live); border: 1px solid #065f46; }
+	.tag-wip { background-color: rgba(251, 191, 36, 0.1); color: var(--accent); border: 1px solid #92400e; }
 
-	/* 状态标签呼吸灯 */
+	/* 呼吸灯 */
 	.dot {
 		width: 0.45rem;
 		height: 0.45rem;
@@ -131,49 +187,20 @@ const tracks = await fetchLatestTracks('https://build.laity.work/rss.xml', 3);
 		flex-shrink: 0;
 		animation: breathe 2s ease-in-out infinite;
 	}
-	.tag-live .dot { background-color: #34d399; --halo: rgba(52, 211, 153, 0.6); }
-	.tag-wip .dot { background-color: #fbbf24; --halo: rgba(251, 191, 36, 0.6); }
+	.tag-live .dot { background-color: var(--live); --halo: rgba(52, 211, 153, 0.6); }
+	.tag-wip .dot { background-color: var(--accent); --halo: rgba(251, 191, 36, 0.6); }
 	@keyframes breathe {
 		0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--halo); }
 		50% { opacity: 0.45; box-shadow: 0 0 0 4px rgba(0, 0, 0, 0); }
 	}
 
-	/* 特别强调的卡片 */
-	.card-main {
-		background: linear-gradient(135deg, #18181b 0%, #27272a 100%);
-		border-color: #3f3f46;
-	}
-	.card-main h3 { color: #fbbf24; }
-
 	/* 最新轨迹 */
-	.tracks { margin-top: 4rem; }
-	.tracks h2, .subscribe h2 { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #52525b; margin-bottom: 0.5rem; }
+	.tracks { padding: 4rem 0; border-top: 1px solid var(--line); }
+	.tracks > .label { display: block; margin-bottom: 1rem; }
 	.tracks ul { list-style: none; }
-	.tracks li { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.85rem 0; border-bottom: 1px solid #27272a; }
-	.tracks li a { color: #f4f4f5; text-decoration: none; transition: color 0.2s ease; }
-	.tracks li a:hover { color: #fbbf24; }
-	.tracks time { color: #52525b; font-size: 0.8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
-	.tracks-fallback { color: #52525b; font-size: 0.9rem; padding: 0.85rem 0; }
-
-	/* 订阅入口 */
-	.subscribe { margin-top: 3rem; }
-	.rss-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.65rem 1.4rem;
-		background-color: #18181b;
-		border: 1px solid #3f3f46;
-		border-radius: 1rem;
-		color: #fbbf24;
-		font-size: 0.9rem;
-		font-weight: 600;
-		text-decoration: none;
-		transition: all 0.2s ease;
-	}
-	.rss-btn:hover {
-		border-color: #52525b;
-		transform: translateY(-2px);
-		background-color: #1f1f23;
-	}
+	.tracks li { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
+	.tracks li a { color: var(--fg); text-decoration: none; transition: color 0.2s ease; }
+	.tracks li a:hover { color: var(--accent); }
+	.tracks time { color: var(--dim); font-size: 0.8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+	.tracks-fallback { color: var(--dim); font-size: 0.9rem; }
 </style>

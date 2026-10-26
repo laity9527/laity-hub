@@ -1,14 +1,14 @@
 ---
 // 404
-import Base from '../layouts/Base.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<Base title="404 | Laity Studio" centered>
+<BaseLayout title="404 | Laity" centered>
 	<div class="container">
 		<h1><span class="highlight">404.</span> 这个矩阵还没被创造出来。</h1>
 		<a href="/" class="home">← 返回 Laity 母舰</a>
 	</div>
-</Base>
+</BaseLayout>
 
 <style>
 	.container { text-align: center; }
@@ -19,17 +19,17 @@ import Base from '../layouts/Base.astro';
 		display: inline-block;
 		margin-top: 2.5rem;
 		padding: 0.75rem 1.75rem;
-		background-color: #18181b;
-		border: 1px solid #3f3f46;
+		background-color: var(--surface);
+		border: 1px solid var(--line-strong);
 		border-radius: 1rem;
-		color: #fbbf24;
+		color: var(--accent);
 		font-weight: 600;
 		text-decoration: none;
 		transition: all 0.2s ease;
 	}
 	.home:hover {
-		border-color: #52525b;
+		border-color: var(--line-hover);
 		transform: translateY(-2px);
-		background-color: #1f1f23;
+		background-color: var(--surface-hover);
 	}
 </style>

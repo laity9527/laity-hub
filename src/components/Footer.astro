@@ -1,0 +1,35 @@
+---
+// 全局页脚：左版权，右订阅与联系
+---
+
+<footer>
+	<div class="foot-inner">
+		<p class="copy">© 2026 Laity Studio. Built with AI.</p>
+		<div class="links">
+			<a href="https://build.laity.work/rss.xml" target="_blank" rel="noopener">订阅所有动态 (RSS)</a>
+			<a href="mailto:laity.zl@foxmail.com">laity.zl@foxmail.com</a>
+		</div>
+	</div>
+</footer>
+
+<style>
+	footer { margin-top: 5rem; }
+	.foot-inner {
+		max-width: 1000px;
+		margin: 0 auto;
+		padding: 2rem 0;
+		border-top: 1px solid var(--line);
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem 1.5rem;
+	}
+	.copy { color: var(--dim); font-size: 0.85rem; }
+	.links { display: flex; align-items: center; gap: 1.5rem; }
+	.links a { color: var(--muted); font-size: 0.85rem; text-decoration: none; transition: color 0.2s ease; }
+	.links a:hover { color: var(--accent); }
+	@media (max-width: 640px) {
+		.foot-inner { justify-content: center; text-align: center; }
+	}
+</style>

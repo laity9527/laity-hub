@@ -1,9 +1,9 @@
 ---
 // 关于 Laity
-import Base from '../layouts/Base.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<Base title="关于 Laity | Laity Studio">
+<BaseLayout title="关于 Laity | 独立开发厂牌" description="Laity Studio 是一个独立开发厂牌：外行造世界，用 AI 把想法直接做成上线作品。">
 	<div class="container">
 
 		<header>
@@ -15,12 +15,8 @@ import Base from '../layouts/Base.astro';
 			<p class="lead">Laity Studio 是一个<span class="highlight">独立开发厂牌</span>，致力于利用 AI 和现代 Web 技术，将想法直接转化为上线作品。</p>
 		</main>
 
-		<footer>
-			<a href="/">← 返回 Laity 母舰</a>
-		</footer>
-
 	</div>
-</Base>
+</BaseLayout>
 
 <style>
 	/* 正文区 */
