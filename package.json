@@ -2,6 +2,7 @@
   "name": "laity-hub",
   "type": "module",
   "version": "0.0.1",
+  "private": true,
   "engines": {
     "node": ">=22.23.4"
   },

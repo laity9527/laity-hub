@@ -57,7 +57,7 @@ const isCurrent = (target: string) => currentPath === normalize(target);
 		<meta name="twitter:image:alt" content="Laity · 把判断做成产品" />
 		<meta name="theme-color" content="#0a0a0a" />
 		<meta name="color-scheme" content="dark" />
-		{noindex && <meta name="robots" content="noindex" />}
+		<meta name="robots" content={noindex ? 'noindex' : 'max-image-preview:large'} />
 		{jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
