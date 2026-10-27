@@ -5,7 +5,6 @@
 		"description": "一个公开的判断轨迹站。记录每个作品从想法到上线的 BEFORE 与 AFTER 开发日志。",
 		"status": "live",
 		"url": "https://build.laity.work",
-		"icon": "📓",
 		"isFeatured": true,
 		"stack": ["Astro", "Cloudflare"]
 	},
@@ -15,7 +14,6 @@
 		"description": "真人镜像版系统。",
 		"status": "wip",
 		"url": "#",
-		"icon": "🌍",
 		"isFeatured": true,
 		"stack": ["Tauri", "Rust"]
 	},
@@ -25,7 +23,6 @@
 		"description": "中药材溯源与辅助工具。",
 		"status": "live",
 		"url": "#",
-		"icon": "🌿",
 		"isFeatured": true,
 		"stack": ["小程序"]
 	},
@@ -35,7 +32,6 @@
 		"description": "休闲策略小程序。",
 		"status": "live",
 		"url": "#",
-		"icon": "⚔️",
 		"isFeatured": false,
 		"stack": []
 	},
@@ -45,7 +41,6 @@
 		"description": "基于性格的行为倾向测试。",
 		"status": "live",
 		"url": "#",
-		"icon": "🧠",
 		"isFeatured": false,
 		"stack": []
 	}

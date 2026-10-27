@@ -1,43 +1,19 @@
-# Astro Starter Kit: Minimal
+# Laity
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Laity 独立开发厂牌主站（https://laity.work）。单页官网，纯 Astro 与原生 CSS，部署在 Cloudflare Pages。
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+- `src/pages/index.astro`：首页（Hero、数据、产品列表、方法论），产品数据来自 `src/data/projects.json`
+- `src/lib/tracks.ts`：构建时拉取前后志 RSS，失败时降级为占位文案
+- `src/layouts/BaseLayout.astro`：全站骨架、设计变量与 SEO 元信息
+- `src/components/Footer.astro`：页脚与品牌水印
 
-## 🚀 Project Structure
+前后志子站是独立仓库，其 RSS 输出在 https://build.laity.work/rss.xml。
 
-Inside of your Astro project, you'll see the following folders and files:
+## 命令
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| 命令 | 作用 |
+| --- | --- |
+| `npm install` | 安装依赖 |
+| `npm run dev` | 本地开发（默认 4321 端口） |
+| `npm run build` | 构建到 `dist/` |
+| `npm run preview` | 预览构建产物 |
