@@ -10,7 +10,7 @@ interface Props {
 
 const {
 	title = 'Laity | 独立开发厂牌',
-	description = '外行造世界。用 AI 构建项目矩阵。',
+	description = 'Laity 是一家独立开发厂牌。在 AI 时代，判断力比代码更珍贵。',
 	centered = false,
 } = Astro.props;
 ---
@@ -35,16 +35,16 @@ const {
 	<body class:list={[centered && 'centered']}>
 		<div class="bg-grid" aria-hidden="true"></div>
 
-		<nav>
+		<header class="site-nav">
 			<div class="nav-inner">
 				<a class="logo" href="/">Laity<span class="highlight">.</span></a>
-				<div class="nav-links">
-					<a href="/#projects">Projects</a>
+				<nav class="nav-links" aria-label="主导航">
+					<a href="/#products">Products</a>
 					<a href="/about">About</a>
-					<a href="https://github.com/laity9527" target="_blank" rel="noopener">GitHub</a>
-				</div>
+					<a href="https://github.com/laity9527" target="_blank" rel="noopener">GitHub ↗</a>
+				</nav>
 			</div>
-		</nav>
+		</header>
 
 		<slot />
 
@@ -54,30 +54,38 @@ const {
 
 <style is:global>
 	:root {
-		--bg: #09090b;
-		--surface: #121212;
-		--surface-hover: #1a1a1d;
-		--line: #27272a;
-		--line-strong: #3f3f46;
-		/* 悬停边框改用半透明白，比琥珀更克制 */
-		--line-hover: rgba(255, 255, 255, 0.26);
+		--bg: #0a0a0a;
+		--surface: #101010;
+		--surface-hover: #161616;
+		--line: #1f1f1f;
+		--line-strong: #2e2e2e;
+		--line-hover: rgba(255, 255, 255, 0.22);
 		--fg: #ededed;
 		--fg-bright: #ffffff;
-		--muted: #a1a1aa;
-		--dim: #71717a;
+		--muted: #888888;
+		--dim: #5c5c5c;
 		--accent: #fbbf24;
 		--live: #34d399;
 		--shell: 1120px;
 		--pad: 1.5rem;
-		--rhythm: 8rem;
+		/* 区块之间的固定节奏（8px 的整数倍） */
+		--section: 8rem;
+		--mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 	}
 
-	/* 基础重置与全局样式 */
 	* { box-sizing: border-box; margin: 0; padding: 0; }
-	html { scroll-behavior: smooth; background-color: var(--bg); }
+	html {
+		scroll-behavior: smooth;
+		scroll-padding-top: 5rem;
+		background-color: var(--bg);
+		/* 中心略亮、四周暗的极弱径向渐变 */
+		background-image: radial-gradient(60rem 36rem at 50% 0%, rgba(255, 255, 255, 0.045), rgba(10, 10, 10, 0) 68%);
+		background-repeat: no-repeat;
+		background-attachment: fixed;
+	}
 	body {
 		color: var(--fg);
-		font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+		font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 		line-height: 1.6;
 		background-color: transparent;
 		padding-bottom: 4rem;
@@ -89,18 +97,18 @@ const {
 	}
 	body.centered .container { margin-top: auto; margin-bottom: auto; }
 
-	/* 科技感网格底纹：固定不随滚动，用遮罩自上而下渐隐 */
+	/* 固定不随滚动的像素网格，向下渐隐 */
 	.bg-grid {
 		position: fixed;
 		inset: 0;
 		z-index: 0;
 		pointer-events: none;
 		background-image:
-			linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, rgba(0, 0, 0, 0) 1px),
-			linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, rgba(0, 0, 0, 0) 1px);
-		background-size: 64px 64px;
-		mask-image: radial-gradient(90rem 55rem at 50% -8%, #000 35%, rgba(0, 0, 0, 0) 78%);
-		-webkit-mask-image: radial-gradient(90rem 55rem at 50% -8%, #000 35%, rgba(0, 0, 0, 0) 78%);
+			linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, rgba(0, 0, 0, 0) 1px),
+			linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, rgba(0, 0, 0, 0) 1px);
+		background-size: 32px 32px;
+		mask-image: radial-gradient(80rem 50rem at 50% 0%, #000 30%, rgba(0, 0, 0, 0) 75%);
+		-webkit-mask-image: radial-gradient(80rem 50rem at 50% 0%, #000 30%, rgba(0, 0, 0, 0) 75%);
 	}
 
 	.container {
@@ -112,13 +120,13 @@ const {
 		padding: 0 var(--pad);
 	}
 
-	/* 吸顶导航：毛玻璃 + 拉满宽度 */
-	nav {
+	/* 吸顶毛玻璃导航 */
+	.site-nav {
 		position: sticky;
 		top: 0;
 		z-index: 50;
 		width: 100%;
-		background-color: rgba(9, 9, 11, 0.72);
+		background-color: rgba(10, 10, 10, 0.72);
 		-webkit-backdrop-filter: blur(12px);
 		backdrop-filter: blur(12px);
 		border-bottom: 1px solid var(--line);
@@ -129,40 +137,40 @@ const {
 		width: 100%;
 		max-width: var(--shell);
 		margin: 0 auto;
-		padding: 1.25rem var(--pad);
+		min-height: 4rem;
+		padding: 1rem var(--pad);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 1rem;
 	}
-	.logo { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; color: var(--fg-bright); text-decoration: none; }
-	.nav-links { display: flex; align-items: center; gap: 1.75rem; }
-	.nav-links a { color: var(--muted); font-size: 0.9rem; text-decoration: none; transition: color 0.2s ease; }
+	.logo { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.02em; color: var(--fg-bright); text-decoration: none; }
+	.highlight { color: var(--accent); }
+	.nav-links { display: flex; align-items: center; gap: 2rem; }
+	.nav-links a { color: var(--muted); font-size: 0.875rem; text-decoration: none; transition: color 0.15s ease; }
 	.nav-links a:hover { color: var(--fg-bright); }
 
-	/* 页头区 */
-	header { margin: 6rem 0 var(--rhythm); text-align: center; }
-	h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 1rem; }
-	.highlight { color: var(--accent); }
+	/* 二级页（About / 404）的页头 */
+	header:not(.site-nav) { margin: 6rem 0 var(--section); text-align: center; }
+	h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 1rem; }
 	.subtitle { font-size: 1.25rem; color: var(--muted); max-width: 600px; margin: 0 auto; }
 
 	@media (max-width: 640px) {
-		:root { --pad: 1.25rem; }
+		:root { --pad: 1.25rem; --section: 5rem; }
 		h1 { font-size: 2.5rem; }
-		.nav-inner { padding: 1rem var(--pad); }
 		.nav-links { gap: 1.25rem; }
 		.nav-links a { font-size: 0.85rem; }
-		header { margin: 4rem 0 5rem; }
+		header:not(.site-nav) { margin: 4rem 0 var(--section); }
 	}
 
-	/* 键盘可达性：只用焦点环，不影响鼠标交互 */
-	a:focus-visible, .card:focus-visible {
+	/* 键盘可达性 */
+	a:focus-visible {
 		outline: 2px solid rgba(251, 191, 36, 0.75);
 		outline-offset: 3px;
-		border-radius: 0.4rem;
+		border-radius: 4px;
 	}
 
-	/* 尊重系统的「减少动态效果」：动画收敛到终态，内容不会停在不可见状态 */
+	/* 尊重系统的「减少动态效果」 */
 	@media (prefers-reduced-motion: reduce) {
 		html { scroll-behavior: auto; }
 		*, *::before, *::after {

@@ -1,23 +1,29 @@
 ---
-// 全局页脚：左版权，右订阅与联系
+// 全局页脚：左版权，右联系入口，底部巨型水印
 ---
 
 <footer>
 	<div class="foot-inner">
-		<p class="copy">© 2026 Laity Studio. Built with AI.</p>
+		<p class="copy">© 2026 Laity Studio.</p>
 		<div class="links">
-			<a href="https://build.laity.work/rss.xml" target="_blank" rel="noopener">订阅所有动态 (RSS)</a>
-			<a href="mailto:laity.zl@foxmail.com">laity.zl@foxmail.com</a>
+			<a href="mailto:laity.zl@foxmail.com">Email</a>
+			<a href="https://build.laity.work/rss.xml" target="_blank" rel="noopener">RSS</a>
+			<a href="https://github.com/laity9527" target="_blank" rel="noopener">GitHub</a>
 		</div>
 	</div>
+	<p class="watermark" aria-hidden="true">Laity</p>
 </footer>
 
 <style>
-	footer { margin-top: var(--rhythm); }
+	footer {
+		position: relative;
+		margin-top: var(--section);
+		overflow: hidden;
+	}
 	.foot-inner {
 		max-width: var(--shell);
 		margin: 0 auto;
-		padding: 2.5rem var(--pad);
+		padding: 2rem var(--pad);
 		border-top: 1px solid var(--line);
 		display: flex;
 		flex-wrap: wrap;
@@ -25,11 +31,26 @@
 		justify-content: space-between;
 		gap: 0.75rem 1.5rem;
 	}
-	.copy { color: var(--dim); font-size: 0.85rem; }
+	.copy { color: var(--dim); font-size: 0.8125rem; }
 	.links { display: flex; align-items: center; gap: 1.5rem; }
-	.links a { color: var(--muted); font-size: 0.85rem; text-decoration: none; transition: color 0.2s ease; }
-	.links a:hover { color: var(--accent); }
+	.links a { color: var(--muted); font-size: 0.8125rem; text-decoration: none; transition: color 0.15s ease; }
+	.links a:hover { color: var(--fg-bright); }
+
+	/* 极暗的品牌水印，只做收尾点缀 */
+	.watermark {
+		margin-top: 1.5rem;
+		text-align: center;
+		font-size: clamp(4rem, 18vw, 12rem);
+		font-weight: 800;
+		line-height: 0.8;
+		letter-spacing: -0.06em;
+		color: rgba(255, 255, 255, 0.022);
+		user-select: none;
+		pointer-events: none;
+		white-space: nowrap;
+	}
+
 	@media (max-width: 640px) {
-		.foot-inner { justify-content: center; text-align: center; }
+		.foot-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
 	}
 </style>
