@@ -6,7 +6,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="404 | Laity" centered noindex>
 	<div class="container">
 		<h1><span class="highlight">404.</span> 这个矩阵还没被创造出来。</h1>
-		<a href="/" class="home">← 返回 Laity 母舰</a>
+		<div class="actions">
+			<a href="/" class="home">← 返回 Laity 母舰</a>
+			<a href="https://build.laity.work" class="home" target="_blank" rel="noopener">进入前后志 ↗</a>
+		</div>
 	</div>
 </BaseLayout>
 
@@ -15,11 +18,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 	h1 { font-size: clamp(2rem, 8vw, 3.5rem); }
 
 	/* 返回按钮：与首页幽灵按钮同一套 8px 体系 */
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.75rem;
+		margin-top: 2.5rem;
+	}
 	.home {
 		display: inline-flex;
 		align-items: center;
 		height: 3rem;
-		margin-top: 2.5rem;
 		padding: 0 1.5rem;
 		border: 1px solid var(--line-strong);
 		border-radius: 8px;

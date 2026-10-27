@@ -9,16 +9,32 @@ const padded = (n: number) => String(n).padStart(2, '0');
 
 const products = projects.filter((project) => project.isFeatured);
 const activeProjects = products.filter((project) => project.status === 'live').length;
+
+const siteUrl = (Astro.site ?? new URL('https://laity.work')).href.replace(/\/$/, '');
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Organization',
+	name: 'Laity',
+	alternateName: 'Laity Studio',
+	url: siteUrl,
+	logo: `${siteUrl}/apple-touch-icon.png`,
+	description: 'Laity 是一家独立开发厂牌：用 AI 与现代 Web 技术把想法做成上线产品，并公开每个判断的 BEFORE 与 AFTER。',
+	sameAs: ['https://github.com/laity9527', 'https://build.laity.work'],
+};
 ---
 
-<BaseLayout description="Laity 是一家独立开发厂牌。在 AI 时代，判断力比代码更珍贵。">
+<BaseLayout
+	title="Laity｜独立开发厂牌 · 把判断做成产品"
+	description="Laity 是一家独立开发厂牌：用 AI 与现代 Web 技术把想法做成上线产品，并把每个决定的 BEFORE 与 AFTER 公开记录在前后志。"
+	jsonLd={jsonLd}
+>
 	<div class="container">
 		<main>
 
 		<!-- 1. Hero -->
 		<section class="hero">
-			<h1>Building digital realms.</h1>
-			<p class="lede">Laity 是一家独立开发厂牌。我们相信，在 AI 时代，判断力比代码更珍贵。</p>
+			<h1>把判断做成产品。</h1>
+			<p class="lede">Laity 是一家独立开发厂牌。我们用 AI 与现代 Web 技术，把想法做成能上线的产品，并把每个决定的 BEFORE 与 AFTER 公开记录在前后志。</p>
 			<div class="cta">
 				<a class="btn-primary" href="#products">Explore Products</a>
 				<a class="btn-ghost" href="https://build.laity.work" target="_blank" rel="noopener">Read the Logs ↗</a>

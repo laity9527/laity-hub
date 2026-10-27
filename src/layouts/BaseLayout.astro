@@ -4,6 +4,10 @@ import Footer from '../components/Footer.astro';
 interface Props {
 	title?: string;
 	description?: string;
+	/** 社交分享图路径，默认品牌 OG 图 */
+	image?: string;
+	/** 结构化数据（如 Organization） */
+	jsonLd?: Record<string, unknown>;
 	/** 单屏居中页（如 404）：整列垂直居中 */
 	centered?: boolean;
 	/** 不收录（如 404） */
@@ -13,11 +17,14 @@ interface Props {
 const {
 	title = 'Laity | 独立开发厂牌',
 	description = 'Laity 是一家独立开发厂牌。在 AI 时代，判断力比代码更珍贵。',
+	image = '/og/og-default.png',
+	jsonLd,
 	centered = false,
 	noindex = false,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+const imageUrl = new URL(image, Astro.site ?? Astro.url.origin).href;
 ---
 
 <!DOCTYPE html>
@@ -33,9 +40,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content={canonical} />
 		<meta property="og:locale" content="zh_CN" />
+		<meta property="og:site_name" content="Laity" />
+		<meta property="og:image" content={imageUrl} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content="Laity · 把判断做成产品" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={imageUrl} />
 		<meta name="theme-color" content="#0a0a0a" />
 		{noindex && <meta name="robots" content="noindex" />}
+		{jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	</head>
 	<body class:list={[centered && 'centered']}>
 		<div class="bg-grid" aria-hidden="true"></div>
@@ -90,7 +108,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
 	}
 	body {
 		color: var(--fg);
-		font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 		line-height: 1.6;
 		background-color: transparent;
 		padding-bottom: 4rem;
