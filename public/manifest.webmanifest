@@ -1,0 +1,25 @@
+{
+	"name": "Laity · 把判断做成产品",
+	"short_name": "Laity",
+	"description": "Laity 是一家独立开发厂牌：用 AI 与现代 Web 技术把想法做成上线产品，并公开每个判断的 BEFORE 与 AFTER。",
+	"lang": "zh-CN",
+	"start_url": "/",
+	"scope": "/",
+	"display": "standalone",
+	"background_color": "#0a0a0a",
+	"theme_color": "#0a0a0a",
+	"icons": [
+		{
+			"src": "/icon-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		}
+	]
+}

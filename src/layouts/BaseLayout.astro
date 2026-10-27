@@ -52,11 +52,14 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url.origin).href;
 		<meta name="twitter:image" content={imageUrl} />
 		<meta name="twitter:image:alt" content="Laity · 把判断做成产品" />
 		<meta name="theme-color" content="#0a0a0a" />
+		<meta name="color-scheme" content="dark" />
 		{noindex && <meta name="robots" content="noindex" />}
 		{jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="mask-icon" href="/mask-icon.svg" color="#fbbf24" />
+		<link rel="manifest" href="/manifest.webmanifest" />
 	</head>
 	<body class:list={[centered && 'centered']}>
 		<div class="bg-grid" aria-hidden="true"></div>
@@ -67,6 +70,7 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url.origin).href;
 				<nav class="nav-links" aria-label="主导航">
 					<a href="/#products">Products</a>
 					<a href="/about">About</a>
+					<a href="https://build.laity.work" target="_blank" rel="noopener">前后志 ↗</a>
 					<a href="https://github.com/laity9527" target="_blank" rel="noopener me">GitHub ↗</a>
 				</nav>
 			</div>
@@ -184,9 +188,13 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url.origin).href;
 	@media (max-width: 640px) {
 		:root { --pad: 1.25rem; --section: 5rem; }
 		h1 { font-size: 2.5rem; }
-		.nav-links { gap: 1.25rem; }
+		.nav-links { gap: 1rem; }
 		.nav-links a { font-size: 0.85rem; }
 		header:not(.site-nav) { margin: 4rem 0 var(--section); }
+	}
+	@media (max-width: 350px) {
+		.nav-links { gap: 0.5rem; }
+		.nav-links a { font-size: 0.75rem; }
 	}
 
 	/* 键盘可达性 */

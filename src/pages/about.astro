@@ -14,7 +14,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		<main>
 			<p>Laity 在英文里是「外行」。我们把它用作厂牌名，不是为了自谦，而是为了标明立场：不以内行自居，也不等有资格了再动手。世界的变化往往由站在边界之外的人推动——他们不懂既定行规，所以敢用新方法提问。AI 把「不懂」与「做出来」之间的距离压缩到可以被一个下午跨越，我们要做的只有一件事：把想法变成能被别人使用的东西。所以 Laity 是一家独立开发厂牌，用 AI 与现代 Web 技术，把判断直接做成上线作品。</p>
 			<p>我们相信的判断记录，叫做「轨迹」：每个作品都有 BEFORE 与 AFTER。BEFORE 是动手之前的取舍——为什么选这个方向、放弃哪个方案、当时不知道什么；AFTER 是上线之后被现实回应的结果。多数作品只公开后者，而我们把前者一并留档，包括判断失误的那些。因为可复用的不是成功，而是当时的推理。这些轨迹都记在<a href="https://build.laity.work" target="_blank" rel="noopener">前后志</a>里，按时间顺序、可被查证，也欢迎被反驳。</p>
+
+			<section class="now" aria-labelledby="now-label">
+				<h2 id="now-label" class="label">Now</h2>
+				<dl>
+					<div>
+						<dt>Building</dt>
+						<dd>前后志：把每个判断的 BEFORE 与 AFTER 公开留档。</dd>
+					</div>
+					<div>
+						<dt>Cadence</dt>
+						<dd>按判断发生的时间记录，没有固定更新频率。</dd>
+					</div>
+					<div>
+						<dt>Next</dt>
+						<dd>把更多判断做成能上线的产品。</dd>
+					</div>
+				</dl>
+			</section>
 		</main>
+
+		<section class="cta">
+			<p>每一次判断的 BEFORE 与 AFTER，都记在前后志。</p>
+			<a href="https://build.laity.work" target="_blank" rel="noopener">进入前后志 ↗</a>
+		</section>
 
 	</div>
 </BaseLayout>
@@ -26,4 +49,66 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 	main p + p { margin-top: 1.75rem; }
 	main a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(251, 191, 36, 0.35); transition: border-color 0.2s ease; }
 	main a:hover { border-bottom-color: var(--accent); }
+
+	/* Now：当前在做什么，左标签右明细 */
+	.now {
+		margin-top: 5rem;
+		padding-top: 2.5rem;
+		border-top: 1px solid var(--line);
+		display: grid;
+		gap: 1.5rem;
+	}
+	.label {
+		font-family: var(--mono);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--dim);
+	}
+	.now dl { display: grid; gap: 1.25rem; }
+	.now dl > div { display: grid; gap: 0.35rem; }
+	.now dt {
+		font-family: var(--mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--dim);
+	}
+	.now dd { color: #d4d4d8; font-size: 1rem; line-height: 1.7; }
+
+	/* 页尾转化：一条克制的横条 */
+	.cta {
+		max-width: 65ch;
+		margin: 5rem auto 0;
+		padding: 2rem 0;
+		border-top: 1px solid var(--line);
+		border-bottom: 1px solid var(--line);
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem 2rem;
+	}
+	.cta p { color: var(--muted); font-size: 0.9375rem; }
+	.cta a {
+		display: inline-flex;
+		align-items: center;
+		height: 3rem;
+		padding: 0 1.5rem;
+		border-radius: 8px;
+		background-color: var(--fg-bright);
+		color: var(--bg);
+		font-size: 0.9375rem;
+		font-weight: 600;
+		text-decoration: none;
+		transition: background-color 0.15s ease;
+	}
+	@media (hover: hover) {
+		.cta a:hover { background-color: #d9d9d9; }
+	}
+
+	@media (min-width: 768px) {
+		.now { grid-template-columns: 8rem minmax(0, 1fr); gap: 2rem; }
+	}
 </style>
