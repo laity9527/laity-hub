@@ -16,32 +16,5 @@
 		"url": "#",
 		"isFeatured": true,
 		"stack": ["Tauri", "Rust"]
-	},
-	{
-		"id": "yaodu-an",
-		"title": "药都安",
-		"description": "中药材溯源与辅助工具。",
-		"status": "live",
-		"url": "#",
-		"isFeatured": true,
-		"stack": ["小程序"]
-	},
-	{
-		"id": "sanguo-mengzhu",
-		"title": "三国萌主",
-		"description": "休闲策略小程序。",
-		"status": "live",
-		"url": "#",
-		"isFeatured": false,
-		"stack": []
-	},
-	{
-		"id": "sbti",
-		"title": "SBTI测试",
-		"description": "基于性格的行为倾向测试。",
-		"status": "live",
-		"url": "#",
-		"isFeatured": false,
-		"stack": []
 	}
 ]
