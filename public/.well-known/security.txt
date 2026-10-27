@@ -1,0 +1,4 @@
+Contact: mailto:laity.zl@foxmail.com
+Preferred-Languages: zh, en
+Canonical: https://laity.work/.well-known/security.txt
+Expires: 2027-10-27T00:00:00.000Z
