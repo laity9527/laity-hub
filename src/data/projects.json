@@ -5,7 +5,9 @@
 		"description": "一个公开的判断轨迹站。记录每个作品从想法到上线的 BEFORE 与 AFTER 开发日志。",
 		"status": "live",
 		"url": "https://build.laity.work",
-		"isFeatured": true
+		"icon": "📓",
+		"isFeatured": true,
+		"stack": ["Astro 7", "Cloudflare Pages", "Pages Functions", "GitHub API"]
 	},
 	{
 		"id": "diqiu-online",
@@ -13,7 +15,9 @@
 		"description": "真人镜像版系统。",
 		"status": "wip",
 		"url": "#",
-		"isFeatured": false
+		"icon": "🌍",
+		"isFeatured": false,
+		"stack": []
 	},
 	{
 		"id": "yaodu-an",
@@ -21,7 +25,9 @@
 		"description": "中药材溯源与辅助工具。",
 		"status": "live",
 		"url": "#",
-		"isFeatured": false
+		"icon": "🌿",
+		"isFeatured": false,
+		"stack": []
 	},
 	{
 		"id": "sanguo-mengzhu",
@@ -29,7 +35,9 @@
 		"description": "休闲策略小程序。",
 		"status": "live",
 		"url": "#",
-		"isFeatured": false
+		"icon": "⚔️",
+		"isFeatured": false,
+		"stack": []
 	},
 	{
 		"id": "sbti",
@@ -37,6 +45,8 @@
 		"description": "基于性格的行为倾向测试。",
 		"status": "live",
 		"url": "#",
-		"isFeatured": false
+		"icon": "🧠",
+		"isFeatured": false,
+		"stack": []
 	}
 ]

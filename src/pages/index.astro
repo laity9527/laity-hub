@@ -4,10 +4,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { fetchLatestTracks } from '../lib/tracks';
 import projects from '../data/projects.json';
 
+const FEED_URL = 'https://build.laity.work/rss.xml';
 const statusLabel: Record<string, string> = { live: 'Live', wip: 'WIP' };
 const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
 
-const FEED_URL = 'https://build.laity.work/rss.xml';
 const tracks = await fetchLatestTracks(FEED_URL, 3);
 const featuredProjects = projects.filter((project) => project.isFeatured);
 const gridProjects = projects.filter((project) => !project.isFeatured);
@@ -18,11 +18,10 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 
 		<!-- 1. Hero -->
 		<header class="hero">
-			<p class="eyebrow">Laity · 独立开发厂牌</p>
 			<h1>Building digital realms.</h1>
-			<p class="lede">Laity 是一个独立开发厂牌。我是外行，但我用 AI 与代码构建世界。</p>
+			<p class="lede">Laity 独立开发厂牌。用 AI 与代码构建世界。</p>
 			<div class="cta">
-				<a class="btn-primary" href="#projects">查看矩阵</a>
+				<a class="btn-solid" href="#projects">查看矩阵</a>
 				<a class="btn-ghost" href="https://build.laity.work" target="_blank" rel="noopener">阅读轨迹 ↗</a>
 			</div>
 		</header>
@@ -50,16 +49,21 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 						rel={isExternalUrl(project.url) ? 'noopener' : undefined}
 					>
 						<div class="card-top">
-							<h3>{project.title}</h3>
+							<span class="card-title"><span class="icon" aria-hidden="true">{project.icon}</span>{project.title}</span>
 							<span class={`tag tag-${project.status}`}>
 								<span class="dot"></span>{statusLabel[project.status]}
 							</span>
 						</div>
 						<p>{project.description}</p>
+						{project.stack.length > 0 && (
+							<ul class="stack">
+								{project.stack.map((tech) => <li>{tech}</li>)}
+							</ul>
+						)}
 					</a>
 				))}
 
-				<div class="pgrid">
+				<div class="grid">
 					{gridProjects.map((project) => (
 						<a
 							class="card"
@@ -68,26 +72,32 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 							rel={isExternalUrl(project.url) ? 'noopener' : undefined}
 						>
 							<div class="card-top">
-								<h3>{project.title}</h3>
+								<span class="card-title"><span class="icon" aria-hidden="true">{project.icon}</span>{project.title}</span>
 								<span class={`tag tag-${project.status}`}>
 									<span class="dot"></span>{statusLabel[project.status]}
 								</span>
 							</div>
 							<p>{project.description}</p>
+							{project.stack.length > 0 && (
+								<ul class="stack">
+									{project.stack.map((tech) => <li>{tech}</li>)}
+								</ul>
+							)}
 						</a>
 					))}
 				</div>
 			</section>
 
-			<!-- 4. Latest Traces（最新轨迹：构建时拉取，失败则降级为占位文案） -->
+			<!-- 4. Latest Traces（构建时拉取，失败则降级为占位文案） -->
 			<section class="tracks" data-feed={FEED_URL}>
 				<h2 class="label">Latest Traces</h2>
 				{tracks.length > 0 ? (
 					<ul>
 						{tracks.map((track) => (
 							<li>
+								{track.date ? <time datetime={track.date}>{track.date}</time> : <span class="tracks-blank"></span>}
 								<a href={track.url} target="_blank" rel="noopener">{track.title}</a>
-								{track.date && <time datetime={track.date}>{track.date}</time>}
+								<span class="arrow" aria-hidden="true">→</span>
 							</li>
 						))}
 					</ul>
@@ -102,52 +112,67 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 </BaseLayout>
 
 <style>
-	/* Hero */
-	.hero { margin: 5rem 0 6rem; text-align: center; }
-	.eyebrow { font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.25rem; }
-	.hero h1 { font-size: clamp(2.75rem, 7vw, 4.25rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.04em; margin-bottom: 1.25rem; }
-	.lede { max-width: 620px; margin: 0 auto; font-size: 1.2rem; color: var(--muted); }
-	.cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 2.5rem; }
-
-	/* Hero 入场：淡入上浮，逐级延迟。
-	   故意不写静态 opacity:0 —— 起始隐藏交给 keyframe 的 from + fill:both，
-	   这样在不执行动画的环境里内容仍然可见，不会整块消失 */
-	.hero .eyebrow, .hero h1, .hero .lede, .hero .cta {
-		animation: rise 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+	/* Hero：占满首屏主体，标题背后一层极暗径向光晕 */
+	.hero {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 82vh;
+		margin: 4rem 0 var(--rhythm);
+		text-align: center;
 	}
-	.hero .eyebrow { animation-delay: 0.05s; }
-	.hero h1 { animation-delay: 0.16s; }
-	.hero .lede { animation-delay: 0.28s; }
-	.hero .cta { animation-delay: 0.4s; }
-	/* 兜底：动画若因异常环境没有推进，2 秒后强制落终态，避免首屏一直停在起始隐藏态 */
-	.hero[data-anim='done'] .eyebrow, .hero[data-anim='done'] h1, .hero[data-anim='done'] .lede, .hero[data-anim='done'] .cta {
+	.hero::before {
+		content: '';
+		position: absolute;
+		inset: -10% -20% auto;
+		height: 46rem;
+		z-index: -1;
+		pointer-events: none;
+		background: radial-gradient(38rem 24rem at 50% 42%, rgba(251, 191, 36, 0.09), rgba(0, 0, 0, 0) 70%);
+	}
+	.hero h1 {
+		color: var(--fg-bright);
+		font-size: clamp(3.5rem, 6vw, 5rem);
+		font-weight: 800;
+		line-height: 1.02;
+		letter-spacing: -0.04em;
+	}
+	.lede { max-width: 46rem; margin-top: 1.5rem; color: var(--muted); font-size: 1.2rem; }
+	.cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 2.75rem; }
+	.btn-solid, .btn-ghost {
+		padding: 0.8rem 1.6rem;
+		border-radius: 999px;
+		font-size: 0.95rem;
+		font-weight: 600;
+		text-decoration: none;
+		transition: opacity 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+	}
+	.btn-solid { background-color: var(--fg-bright); color: var(--bg); }
+	.btn-solid:hover { opacity: 0.88; transform: translateY(-1px); }
+	.btn-ghost { border: 1px solid var(--line-strong); color: var(--fg); }
+	.btn-ghost:hover { border-color: var(--line-hover); background-color: var(--surface); transform: translateY(-1px); }
+
+	/* 入场动画：起始隐藏只由 keyframe + fill:both 提供，异常环境不会把内容留在不可见态 */
+	.hero h1, .hero .lede, .hero .cta { animation: rise 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+	.hero h1 { animation-delay: 0.05s; }
+	.hero .lede { animation-delay: 0.18s; }
+	.hero .cta { animation-delay: 0.32s; }
+	.hero[data-anim='done'] h1, .hero[data-anim='done'] .lede, .hero[data-anim='done'] .cta {
 		animation: none;
 		opacity: 1;
 		transform: none;
 	}
 	@keyframes rise {
-		from { opacity: 0; transform: translateY(16px); }
+		from { opacity: 0; transform: translateY(18px); }
 		to { opacity: 1; transform: none; }
 	}
-	.btn-primary, .btn-ghost {
-		padding: 0.7rem 1.5rem;
-		border-radius: 0.6rem;
-		font-size: 0.95rem;
-		font-weight: 600;
-		text-decoration: none;
-		transition: all 0.2s ease;
-	}
-	.btn-primary { background-color: var(--fg); color: var(--bg); }
-	.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
-	.btn-ghost { border: 1px solid var(--line-strong); color: var(--fg); }
-	.btn-ghost:hover { border-color: var(--line-hover); background-color: var(--surface); transform: translateY(-1px); }
 
-	/* 分区小标题 */
+	/* 区块小标题与节奏 */
 	.label { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
-
-	/* Methodology：左标签 / 右大字 */
-	.method { display: grid; gap: 1.5rem; padding: 4rem 0; border-top: 1px solid var(--line); }
-	.tenet { font-size: clamp(1.6rem, 3.4vw, 2.25rem); font-weight: 700; line-height: 1.35; letter-spacing: -0.02em; }
+	.method { display: grid; gap: 1.5rem; margin-bottom: var(--rhythm); padding-top: 4rem; border-top: 1px solid var(--line); }
+	.tenet { font-size: clamp(1.6rem, 3.2vw, 2.25rem); font-weight: 700; line-height: 1.35; letter-spacing: -0.02em; }
 	.tenet + .tenet { margin-top: 1.25rem; }
 	.num { margin-right: 0.6rem; color: var(--accent); font-variant-numeric: tabular-nums; }
 	@media (min-width: 768px) {
@@ -155,57 +180,64 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 	}
 
 	/* 项目矩阵 */
-	.projects { padding: 4rem 0; border-top: 1px solid var(--line); }
+	.projects { margin-bottom: var(--rhythm); padding-top: 4rem; border-top: 1px solid var(--line); }
 	.projects > .label { display: block; margin-bottom: 2.5rem; }
-	.pgrid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin-top: 1.25rem; grid-auto-rows: 1fr; }
+	.grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; grid-auto-rows: 1fr; }
 	@media (min-width: 768px) {
-		.pgrid { grid-template-columns: repeat(3, 1fr); }
+		.grid { grid-template-columns: repeat(3, 1fr); }
 	}
 
 	.card {
 		display: flex;
 		flex-direction: column;
-		padding: 1.75rem;
+		padding: 2rem;
 		background-color: var(--surface);
 		border: 1px solid var(--line);
-		border-radius: 0.9rem;
+		border-radius: 1rem;
 		color: inherit;
 		text-decoration: none;
-		position: relative;
-		overflow: hidden;
-		transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+		transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
 	}
 	.card:hover {
-		border-color: rgba(251, 191, 36, 0.42);
+		border-color: var(--line-hover);
 		background-color: var(--surface-hover);
-		box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.08), 0 18px 40px -20px rgba(251, 191, 36, 0.22);
-		transform: translateY(-3px);
+		transform: translateY(-2px);
 	}
 	.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
-	.card h3 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
-	.card p { margin-top: 0.75rem; color: var(--muted); font-size: 0.9rem; flex-grow: 1; }
+	.card-title { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; color: var(--fg); }
+	.icon { font-size: 1.05rem; line-height: 1; }
+	.card > p { margin-top: 1rem; color: var(--muted); font-size: 0.95rem; flex-grow: 1; }
 
-	/* 重点推荐：横跨全宽 */
-	.card-featured { padding: 2.5rem; background: linear-gradient(135deg, var(--surface) 0%, var(--line) 100%); border-color: var(--line-strong); }
-	.card-featured h3 { font-size: 1.6rem; color: var(--accent); }
-	.card-featured p { margin-top: 1rem; max-width: 62ch; font-size: 1.05rem; }
-	.card-featured:hover {
-		border-color: rgba(251, 191, 36, 0.5);
-		background: linear-gradient(135deg, var(--surface-hover) 0%, var(--line-strong) 100%);
-		box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.1), 0 24px 60px -24px rgba(251, 191, 36, 0.28);
+	/* 技术栈标签：无数据时整行不渲染 */
+	.stack { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--line); list-style: none; }
+	.stack li {
+		padding: 0.2rem 0.55rem;
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		color: var(--dim);
+		font-size: 0.7rem;
+		letter-spacing: 0.02em;
+		white-space: nowrap;
 	}
+
+	/* 重点推荐：横跨整行 */
+	.card-featured { padding: 2.5rem; background-image: linear-gradient(135deg, var(--surface) 0%, var(--line) 100%); border-color: var(--line-strong); }
+	.card-featured .card-title { font-size: 1.6rem; }
+	.card-featured > p { margin-top: 1.25rem; max-width: 62ch; font-size: 1.05rem; }
+	.card-featured:hover { border-color: var(--line-hover); background-image: linear-gradient(135deg, var(--surface-hover) 0%, var(--line-strong) 100%); }
 
 	/* 状态标签 */
 	.tag {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4rem;
-		padding: 0.2rem 0.6rem;
-		border-radius: 1rem;
-		font-size: 0.75rem;
-		font-weight: 600;
-		text-transform: uppercase;
 		flex-shrink: 0;
+		padding: 0.2rem 0.65rem;
+		border-radius: 999px;
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
 	}
 	.tag-live { background-color: rgba(52, 211, 153, 0.1); color: var(--live); border: 1px solid #065f46; }
 	.tag-wip { background-color: rgba(251, 191, 36, 0.1); color: var(--accent); border: 1px solid #92400e; }
@@ -221,7 +253,6 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 	}
 	.tag-live .dot { background-color: var(--live); --halo: rgba(52, 211, 153, 0.6); }
 	.tag-wip .dot { background-color: var(--accent); --halo: rgba(251, 191, 36, 0.6); }
-	/* 仅 LIVE 绿点外加一圈 ping 扩散；currentColor 取的就是标签的 --live 文字色 */
 	.tag-live .dot::after {
 		content: '';
 		position: absolute;
@@ -230,32 +261,48 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 		background-color: currentColor;
 		animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
 	}
-	@keyframes ping {
-		0% { transform: scale(1); opacity: 0.5; }
-		70%, 100% { transform: scale(2.6); opacity: 0; }
-	}
 	@keyframes breathe {
 		0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--halo); }
 		50% { opacity: 0.45; box-shadow: 0 0 0 4px rgba(0, 0, 0, 0); }
 	}
+	@keyframes ping {
+		0% { transform: scale(1); opacity: 0.5; }
+		70%, 100% { transform: scale(2.6); opacity: 0; }
+	}
 
-	/* 最新轨迹 */
-	.tracks { padding: 4rem 0; border-top: 1px solid var(--line); }
+	/* Latest Traces：外壳留在这里，行的样式见文末的 is:global 块 */
+	.tracks { margin-bottom: var(--rhythm); padding-top: 4rem; border-top: 1px solid var(--line); }
 	.tracks > .label { display: block; margin-bottom: 1rem; }
-	.tracks ul { list-style: none; }
-	.tracks li { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
-	.tracks li a { color: var(--fg); text-decoration: none; transition: color 0.2s ease; }
-	.tracks li a:hover { color: var(--accent); }
-	.tracks time { color: var(--dim); font-size: 0.8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 	.tracks-fallback { color: var(--dim); font-size: 0.9rem; }
 </style>
 
+<style is:global>
+	/* 运行时刷新用 createElement 造出的行没有 Astro 的 scoped 属性，
+	   写在 scoped style 里只会命中构建时那份 DOM，刷新后样式全丢；所以这套行样式必须是全局的。 */
+	.tracks ul { list-style: none; }
+	.tracks li {
+		display: grid;
+		grid-template-columns: 6.5rem 1fr auto;
+		align-items: center;
+		gap: 1.25rem;
+		padding: 1.1rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+	.tracks li:first-child { border-top: 1px solid var(--line); }
+	.tracks time { color: var(--dim); font-size: 0.82rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+	.tracks-blank { display: block; }
+	.tracks li a { color: var(--fg); text-decoration: none; transition: color 0.2s ease; }
+	.tracks li a:hover { color: var(--fg-bright); }
+	.tracks .arrow { color: var(--dim); font-size: 0.95rem; transition: transform 0.2s ease, color 0.2s ease; }
+	.tracks li:hover .arrow { color: var(--accent); transform: translateX(3px); }
+</style>
+
 <script>
-	// 入场动画兜底：正常浏览器里动画 1.1 秒内就跑完了，这里只是给异常环境一个落地点
+	// 入场动画兜底：正常浏览器 1 秒内就跑完，这里只给异常环境一个落地点
 	const hero = document.querySelector<HTMLElement>('.hero');
 	if (hero) setTimeout(() => hero.setAttribute('data-anim', 'done'), 2000);
 
-	// 渐进增强：构建时已烘入条目，这里再拉一次 feed 让它保持「最新」。
+	// 渐进增强：构建时已烘入条目，这里再拉一次 feed 保持「最新」。
 	// 失败只打标记、不动 DOM，所以无 JS 或拉取失败时呈现的仍是服务端结果。
 	const section = document.querySelector<HTMLElement>('.tracks');
 	const feedUrl = section?.dataset.feed;
@@ -301,18 +348,27 @@ const gridProjects = projects.filter((project) => !project.isFeatured);
 				const list = document.createElement('ul');
 				for (const item of items) {
 					const li = document.createElement('li');
+
+					const time = document.createElement('time');
+					if (item.date) {
+						time.dateTime = item.date;
+						time.textContent = item.date;
+					}
+					li.append(time);
+
 					const a = document.createElement('a');
 					a.href = item.url;
 					a.target = '_blank';
 					a.rel = 'noopener';
 					a.textContent = item.title;
 					li.append(a);
-					if (item.date) {
-						const time = document.createElement('time');
-						time.dateTime = item.date;
-						time.textContent = item.date;
-						li.append(time);
-					}
+
+					const arrow = document.createElement('span');
+					arrow.className = 'arrow';
+					arrow.setAttribute('aria-hidden', 'true');
+					arrow.textContent = '→';
+					li.append(arrow);
+
 					list.append(li);
 				}
 				const fallback = section.querySelector('.tracks-fallback');
