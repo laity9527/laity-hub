@@ -17,10 +17,10 @@ const logCount = (await fetchLatestTracks(FEED_URL, 20)).length;
 
 <BaseLayout description="Laity 是一家独立开发厂牌。在 AI 时代，判断力比代码更珍贵。">
 	<div class="container">
+		<main>
 
 		<!-- 1. Hero -->
 		<section class="hero">
-			<p class="status-pill"><span class="pulse" aria-hidden="true"></span>Laity Studio is live.</p>
 			<h1>Building digital realms.</h1>
 			<p class="lede">Laity 是一家独立开发厂牌。我们相信，在 AI 时代，判断力比代码更珍贵。</p>
 			<div class="cta">
@@ -52,8 +52,8 @@ const logCount = (await fetchLatestTracks(FEED_URL, 20)).length;
 				{products.map((project) => (
 					<li>
 						<a
-							class="product"
-							href={project.url}
+							class:list={['product', !isExternalUrl(project.url) && 'is-static']}
+							href={isExternalUrl(project.url) ? project.url : undefined}
 							target={isExternalUrl(project.url) ? '_blank' : undefined}
 							rel={isExternalUrl(project.url) ? 'noopener' : undefined}
 						>
@@ -83,6 +83,7 @@ const logCount = (await fetchLatestTracks(FEED_URL, 20)).length;
 			</div>
 		</section>
 
+		</main>
 	</div>
 </BaseLayout>
 
@@ -102,46 +103,12 @@ const logCount = (await fetchLatestTracks(FEED_URL, 20)).length;
 	.hero::before {
 		content: '';
 		position: absolute;
-		inset: -12% -20% auto;
-		height: 40rem;
+		inset: 0;
 		z-index: -1;
 		pointer-events: none;
 		background: radial-gradient(34rem 22rem at 50% 45%, rgba(255, 255, 255, 0.055), rgba(0, 0, 0, 0) 70%);
 	}
-	.status-pill {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.375rem 0.75rem;
-		border: 1px solid var(--line-strong);
-		border-radius: 999px;
-		background-color: rgba(255, 255, 255, 0.03);
-		color: var(--muted);
-		font-size: 0.75rem;
-		letter-spacing: 0.01em;
-	}
-	.pulse {
-		position: relative;
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background-color: var(--live);
-		flex-shrink: 0;
-	}
-	.pulse::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: 50%;
-		background-color: var(--live);
-		animation: pulse 2.4s ease-out infinite;
-	}
-	@keyframes pulse {
-		0% { transform: scale(1); opacity: 0.55; }
-		70%, 100% { transform: scale(2.6); opacity: 0; }
-	}
 	.hero h1 {
-		margin-top: 1.5rem;
 		color: var(--fg-bright);
 		font-size: clamp(3.5rem, 6vw, 5rem);
 		font-weight: 700;
@@ -175,9 +142,11 @@ const logCount = (await fetchLatestTracks(FEED_URL, 20)).length;
 		transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 	}
 	.btn-primary { background-color: var(--fg-bright); color: var(--bg); }
-	.btn-primary:hover { background-color: #d9d9d9; }
 	.btn-ghost { border: 1px solid var(--line-strong); color: var(--fg); }
-	.btn-ghost:hover { border-color: var(--line-hover); background-color: rgba(255, 255, 255, 0.04); }
+	@media (hover: hover) {
+		.btn-primary:hover { background-color: #d9d9d9; }
+		.btn-ghost:hover { border-color: var(--line-hover); background-color: rgba(255, 255, 255, 0.04); }
+	}
 
 	/* 数据背书：等宽字体 + 极细竖线分隔 */
 	.stats {
@@ -226,7 +195,11 @@ const logCount = (await fetchLatestTracks(FEED_URL, 20)).length;
 		text-decoration: none;
 		transition: background-color 0.2s ease;
 	}
-	.product:hover { background-color: rgba(255, 255, 255, 0.025); }
+	.product.is-static { cursor: default; }
+	.product.is-static .go { display: none; }
+	@media (hover: hover) {
+		.product:not(.is-static):hover { background-color: rgba(255, 255, 255, 0.025); }
+	}
 	.product-main h3 {
 		font-size: 1.5rem;
 		font-weight: 700;
@@ -261,8 +234,10 @@ const logCount = (await fetchLatestTracks(FEED_URL, 20)).length;
 		transform: translateX(-4px);
 		transition: opacity 0.2s ease, transform 0.2s ease;
 	}
-	.product:hover .go,
 	.product:focus-visible .go { opacity: 1; transform: none; }
+	@media (hover: hover) {
+		.product:not(.is-static):hover .go { opacity: 1; transform: none; }
+	}
 
 	/* 方法论：左窄右宽 */
 	.philosophy {
@@ -287,7 +262,7 @@ const logCount = (await fetchLatestTracks(FEED_URL, 20)).length;
 
 	@media (max-width: 720px) {
 		.hero { min-height: 70vh; padding: 3rem 0; margin-bottom: 2rem; }
-		.hero h1 { font-size: 2.75rem; margin-top: 1rem; }
+		.hero h1 { font-size: 2.75rem; }
 		.lede { font-size: 1rem; margin-top: 1rem; }
 		.cta { margin-top: 2rem; }
 

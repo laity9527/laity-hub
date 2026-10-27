@@ -6,13 +6,18 @@ interface Props {
 	description?: string;
 	/** 单屏居中页（如 404）：整列垂直居中 */
 	centered?: boolean;
+	/** 不收录（如 404） */
+	noindex?: boolean;
 }
 
 const {
 	title = 'Laity | 独立开发厂牌',
 	description = 'Laity 是一家独立开发厂牌。在 AI 时代，判断力比代码更珍贵。',
 	centered = false,
+	noindex = false,
 } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
 ---
 
 <!DOCTYPE html>
@@ -22,9 +27,15 @@ const {
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		<link rel="canonical" href={canonical} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:locale" content="zh_CN" />
+		<meta name="theme-color" content="#0a0a0a" />
+		{noindex && <meta name="robots" content="noindex" />}
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link
 			rel="alternate"
 			type="application/rss+xml"
@@ -54,6 +65,7 @@ const {
 
 <style is:global>
 	:root {
+		color-scheme: dark;
 		--bg: #0a0a0a;
 		--surface: #101010;
 		--surface-hover: #161616;
@@ -63,7 +75,8 @@ const {
 		--fg: #ededed;
 		--fg-bright: #ffffff;
 		--muted: #888888;
-		--dim: #5c5c5c;
+		/* 12–13px 的辅助标签也要过 AA（在 #0a0a0a 上约 4.6:1） */
+		--dim: #7a7a7a;
 		--accent: #fbbf24;
 		--live: #34d399;
 		--shell: 1120px;

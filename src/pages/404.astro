@@ -3,7 +3,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="404 | Laity" centered>
+<BaseLayout title="404 | Laity" centered noindex>
 	<div class="container">
 		<h1><span class="highlight">404.</span> 这个矩阵还没被创造出来。</h1>
 		<a href="/" class="home">← 返回 Laity 母舰</a>
@@ -14,23 +14,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 	.container { text-align: center; }
 	h1 { font-size: clamp(2rem, 8vw, 3.5rem); }
 
-	/* 返回按钮 */
+	/* 返回按钮：与首页幽灵按钮同一套 8px 体系 */
 	.home {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		height: 3rem;
 		margin-top: 2.5rem;
-		padding: 0.8rem 1.6rem;
-		background-color: var(--surface);
+		padding: 0 1.5rem;
 		border: 1px solid var(--line-strong);
-		border-radius: 999px;
-		color: var(--accent);
-		font-size: 0.95rem;
+		border-radius: 8px;
+		color: var(--fg);
+		font-size: 0.9375rem;
 		font-weight: 600;
 		text-decoration: none;
-		transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+		transition: border-color 0.15s ease, background-color 0.15s ease;
 	}
-	.home:hover {
-		border-color: var(--line-hover);
-		transform: translateY(-1px);
-		background-color: var(--surface-hover);
+	@media (hover: hover) {
+		.home:hover {
+			border-color: var(--line-hover);
+			background-color: rgba(255, 255, 255, 0.04);
+		}
 	}
 </style>
