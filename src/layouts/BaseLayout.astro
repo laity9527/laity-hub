@@ -25,6 +25,10 @@ const {
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
 const imageUrl = new URL(image, Astro.site ?? Astro.url.origin).href;
+
+const normalize = (p: string) => p.replace(/index$/, '').replace(/\/+$/, '') || '/';
+const currentPath = normalize(Astro.url.pathname);
+const isCurrent = (target: string) => currentPath === normalize(target);
 ---
 
 <!DOCTYPE html>
@@ -60,16 +64,19 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url.origin).href;
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="mask-icon" href="/mask-icon.svg" color="#fbbf24" />
 		<link rel="manifest" href="/manifest.webmanifest" />
+		<link rel="preconnect" href="https://build.laity.work" />
+		<link rel="dns-prefetch" href="https://build.laity.work" />
 	</head>
 	<body class:list={[centered && 'centered']}>
+		<a class="skip-link" href="#main">跳到主要内容</a>
 		<div class="bg-grid" aria-hidden="true"></div>
 
 		<header class="site-nav">
 			<div class="nav-inner">
 				<a class="logo" href="/">Laity<span class="highlight">.</span></a>
 				<nav class="nav-links" aria-label="主导航">
-					<a href="/#products">Products</a>
-					<a href="/about">About</a>
+					<a href="/#products" aria-current={isCurrent('/') ? 'page' : undefined}>Products</a>
+					<a href="/about" aria-current={isCurrent('/about') ? 'page' : undefined}>About</a>
 					<a href="https://build.laity.work" target="_blank" rel="noopener">前后志 ↗</a>
 					<a href="https://github.com/laity9527" target="_blank" rel="noopener me">GitHub ↗</a>
 				</nav>
@@ -198,6 +205,24 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url.origin).href;
 	}
 
 	/* 键盘可达性 */
+	/* 跳转链：平时移出视口，Tab 聚焦时才出现 */
+	.skip-link {
+		position: fixed;
+		top: 0.75rem;
+		left: 0.75rem;
+		z-index: 60;
+		padding: 0.5rem 1rem;
+		border-radius: 8px;
+		background-color: var(--fg-bright);
+		color: var(--bg);
+		font-size: 0.875rem;
+		font-weight: 600;
+		text-decoration: none;
+		transform: translateY(-200%);
+	}
+	.skip-link:focus {
+		transform: none;
+	}
 	a:focus-visible {
 		outline: 2px solid rgba(251, 191, 36, 0.75);
 		outline-offset: 3px;
