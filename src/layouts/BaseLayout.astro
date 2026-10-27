@@ -45,14 +45,17 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url.origin).href;
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta property="og:image:alt" content="Laity · 把判断做成产品" />
+		<meta property="og:image:type" content="image/png" />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={imageUrl} />
+		<meta name="twitter:image:alt" content="Laity · 把判断做成产品" />
 		<meta name="theme-color" content="#0a0a0a" />
 		{noindex && <meta name="robots" content="noindex" />}
 		{jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	</head>
 	<body class:list={[centered && 'centered']}>
@@ -64,7 +67,7 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url.origin).href;
 				<nav class="nav-links" aria-label="主导航">
 					<a href="/#products">Products</a>
 					<a href="/about">About</a>
-					<a href="https://github.com/laity9527" target="_blank" rel="noopener">GitHub ↗</a>
+					<a href="https://github.com/laity9527" target="_blank" rel="noopener me">GitHub ↗</a>
 				</nav>
 			</div>
 		</header>
