@@ -36,12 +36,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
 		<meta name="theme-color" content="#0a0a0a" />
 		{noindex && <meta name="robots" content="noindex" />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link
-			rel="alternate"
-			type="application/rss+xml"
-			title="前后志 · 判断轨迹"
-			href="https://build.laity.work/rss.xml"
-		/>
 	</head>
 	<body class:list={[centered && 'centered']}>
 		<div class="bg-grid" aria-hidden="true"></div>

@@ -3,11 +3,10 @@
 Laity 独立开发厂牌主站（https://laity.work）。单页官网，纯 Astro 与原生 CSS，部署在 Cloudflare Pages。
 
 - `src/pages/index.astro`：首页（Hero、数据、产品列表、方法论），产品数据来自 `src/data/projects.json`
-- `src/lib/tracks.ts`：构建时拉取前后志 RSS，失败时降级为占位文案
 - `src/layouts/BaseLayout.astro`：全站骨架、设计变量与 SEO 元信息
 - `src/components/Footer.astro`：页脚与品牌水印
 
-前后志子站是独立仓库，其 RSS 输出在 https://build.laity.work/rss.xml。
+前后志子站是独立仓库，部署在 https://build.laity.work。
 
 ## 命令
 

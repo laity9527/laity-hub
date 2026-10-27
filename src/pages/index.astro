@@ -1,18 +1,14 @@
 ---
 // Laity 主站
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { fetchLatestTracks } from '../lib/tracks';
 import projects from '../data/projects.json';
 
-const FEED_URL = 'https://build.laity.work/rss.xml';
 const statusLabel: Record<string, string> = { live: 'LIVE', wip: 'WIP' };
 const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
 const padded = (n: number) => String(n).padStart(2, '0');
 
 const products = projects.filter((project) => project.isFeatured);
 const activeProjects = products.filter((project) => project.status === 'live').length;
-// feed 本身只带最新 20 条，超过时这里会封顶在 20
-const logCount = (await fetchLatestTracks(FEED_URL, 20)).length;
 ---
 
 <BaseLayout description="Laity 是一家独立开发厂牌。在 AI 时代，判断力比代码更珍贵。">
@@ -34,10 +30,6 @@ const logCount = (await fetchLatestTracks(FEED_URL, 20)).length;
 			<div class="stat">
 				<dt>ACTIVE PROJECTS</dt>
 				<dd>{padded(activeProjects)}</dd>
-			</div>
-			<div class="stat">
-				<dt>DEV LOGS</dt>
-				<dd>{logCount > 0 ? padded(logCount) : '—'}</dd>
 			</div>
 			<div class="stat">
 				<dt>INFRASTRUCTURE</dt>
