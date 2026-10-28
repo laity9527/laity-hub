@@ -38,11 +38,11 @@ const isCurrent = (target: string) => currentPath === normalize(target);
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
-		<link rel="canonical" href={canonical} />
+		{!noindex && <link rel="canonical" href={canonical} />}
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
-		<meta property="og:url" content={canonical} />
+		{!noindex && <meta property="og:url" content={canonical} />}
 		<meta property="og:locale" content="zh_CN" />
 		<meta property="og:site_name" content="Laity" />
 		<meta property="og:image" content={imageUrl} />
@@ -60,7 +60,7 @@ const isCurrent = (target: string) => currentPath === normalize(target);
 		<meta name="robots" content={noindex ? 'noindex' : 'max-image-preview:large'} />
 		{jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="mask-icon" href="/mask-icon.svg" color="#fbbf24" />
 		<link rel="manifest" href="/manifest.webmanifest" />
